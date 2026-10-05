@@ -1,0 +1,11 @@
+V6.6 SERIES UI LEARNER
+- V6.5 Chrome/passive listener/search/pagination/redirect/catalog behavior preserved.
+- Passive capture-only observer records user clicks on Sezon/Season and E#/Bolum/Episode controls.
+- No automatic clicks, typing, scrolling or navigation added.
+- Series page context learned from /dizi/, /series/, /tv/ routes.
+- Episode clicks are bound to the currently selected season even when URL does not change.
+- Same-site document/xhr/fetch requests immediately following a manual episode click are correlated as metadata evidence.
+- Media segment/stream URLs remain excluded from the series mechanism report.
+- Visible controls and actually clicked episodes are reported separately.
+- New CLOUDSTREAM_REPO_DATA.series.ui_groups fields include available_seasons, available_episodes, clicked_episodes and manual_clicked_episode_count.
+- series_episodes readiness requires URL-shaped episode evidence or a real manual episode click; visible E buttons alone do not mark readiness.

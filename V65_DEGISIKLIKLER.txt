@@ -1,0 +1,25 @@
+RESOLVER LAB LOCAL V65 — AGENTIC F12 / CAUSAL PLAYER HANDOFF
+
+Amaç:
+V64'ün pasif gözlemci modunda kullanıcıdan F12 ile istenen adımları Resolver'ın kendisinin yapması.
+
+V65 eklenenler:
+1. Real Chrome/CDP modunda otomatik player/source action discovery yeniden etkin.
+2. data-player-name ve data-part-key dahil kaynak kontrolleri generic olarak keşfedilir.
+3. Kaynak/oynat düğmelerine kontrollü aksiyon uygulanır; her aksiyondan önce/sonra network delta ölçülür.
+4. XHR/fetch request body gözlemi korunur; action/player/source/video/embed/watch/resolve/url gövdeli cevaplar da runtime event olarak kaydedilir.
+5. JSON response içindeki url/link/href/src/source/embed/iframe/player/watch/redirect alanları MEDIA olmak zorunda olmadan PLAYER_HANDOFF adayı olarak çıkarılır.
+6. PLAYER_HANDOFF aynı Chrome/session içinde yeni browser target olarak kuyruğa alınır.
+7. Handoff tek başına final kabul edilmez; downstream iframe/player/HLS kanıtı gerekir.
+8. Domain/provider hardcode yok. setplay, hdfilmcehennemi, fastplay gibi isimler motor mantığına gömülmedi.
+9. Target bütçesi 8 -> 12 yapıldı; çok aşamalı player zincirlerine alan açıldı.
+10. Mevcut V64 HLS doğrulama, JS decoder, ad veto, header/cookie/session ve öğrenme mekanizmaları korunur.
+
+Yeni önemli loglar:
+[V65_AGENT_BROWSER]
+[V65_AGENT_ACTION]
+[V65_JSON_HANDOFF]
+[V65_HANDOFF_QUEUE]
+
+Beklenen genel zincir:
+DETAIL -> ACTION_DISCOVERY -> CONTROLLED_ACTION -> XHR/FETCH -> JSON_HANDOFF -> PLAYER/IFRAME -> MEDIA -> VERIFY -> LEARN

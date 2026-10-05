@@ -1,0 +1,9 @@
+NORMAL CHROME + MITM FIX
+- Manual analizde Playwright/CDP yok.
+- Once mitmdump/mitmproxy process baslatilir.
+- Proxy portu TCP baglantisiyla dogrulanmadan Chrome ACILMAZ.
+- MITM bulunamazsa veya process olurse acik hata doner; olu proxy ile Chrome acilmaz.
+- MITM stdout/stderr manual_mitm_<session>.log dosyasina yazilir.
+- Analiz Chrome profiline --ignore-certificate-errors eklendi.
+- HTTP sunucu ThreadingHTTPServer.
+- Stop, Chrome kapanisini beklemeden eldeki capture'dan final rapor uretir.

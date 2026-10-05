@@ -1,0 +1,10 @@
+Resolver Lab Local V72
+
+- V71'deki kritik false-positive düzeltildi: .jpg/.png/.webp gibi HLS child dosyalari artik sadece HTTP 200 ve byte uzunlugu ile MEDIA_OBJECT sayilmaz.
+- Media object kaniti dosya adina degil gercek response byte imzasina/MIME'a bakar.
+- Kabul edilen temel medya imzalari: MPEG-TS, ISO-BMFF/fMP4/CMAF, ADTS/MPEG audio, ID3 audio, OGG, WebM/Matroska ve acik medya MIME'lari.
+- JPEG/PNG/GIF/WebP gercek image byte imzalari reddedilir. Uzanti .jpg olsa bile byte'lar MPEG-TS/fMP4 ise medya olarak kabul edilebilir.
+- Manifest/variant replay 302 yonlendirmesi yaparsa effective final URL korunur ve child URL'ler bu effective manifest tabanindan cozulur.
+- #EXT-X-MAP artik tek basina MEDIA_OBJECT kaniti olarak secilmez; gercek playlist segmenti aranir.
+- Yeni loglar: V72_MEDIA_SIGNATURE, V72_REDIRECT_EFFECTIVE, V72_FINAL_STATUS, V72_MEDIA_OBJECT_EVIDENCE, V72_FINAL_MEDIA, V72_PROOF_RULE.
+- Hardcoded provider/final URL/token/endpoint eklenmedi.

@@ -1,0 +1,109 @@
+Resolver Lab V54 - MRC CS3 Corpus Incelemesi
+=============================================
+Kaynak paket: kullanicinin verdigi MRC-builds CS3 dosyalari.
+Incelenen 13 provider: FullHDFilmizlesene, FullHDIzle, HDFilmCehennemi,
+HDFilmDelisi, FilmMakinesi, YesilCamTv, SinemaCX, Sinezy, FilmModu,
+KultFilmler, RareFilmm, JetFilmizle, DiziWatch.
+
+KANITLANAN COZUM AILELERI
+-------------------------
+1) FullHDFilmizlesene
+   - iframe/RapidVid kesfi
+   - SCX + rot13/base64 ailesi
+   - RapidVid config/track, cm/file alanlari
+   - loadExtractor fallback
+
+2) FullHDIzle
+   - iframe HTML
+   - pdata['prt_*'] bootstrap verileri
+   - sources:[{file:...}] player config
+   - VTT file+label altyazi
+   - VidMo ozel cozum fonksiyonu
+
+3) HDFilmCehennemi
+   - Rapidrame ozel cozum
+   - atob/base64, reverse, Caesar/charCode benzeri JS donusum izleri
+   - file_link, sources/file, tracks
+   - fetch/JSON/player-source akis izleri
+
+4) HDFilmDelisi
+   - solveVidmody
+   - hex + sayisal parametreli obfuscation izi
+   - file:'...' ve videoUrl JSON alani
+
+5) FilmMakinesi
+   - script degiskeni -> sources:[{file:VAR}]
+   - atob/base64
+   - dogrudan m3u8 literal
+   - solveCloseLoad
+
+6) YesilCamTv
+   - Rumble iframe/API ailesi
+   - JSON hls.auto.url
+   - JSON mp4 url
+
+7) SinemaCX
+   - iframe + XHR/POST player source
+   - playerjsSubtitle metadata
+   - loadExtractor fallback
+
+8) Sinezy
+   - iframe HTML
+   - pdata['prt_*'] bootstrap ailesi
+   - XHR/POST
+   - loadExtractor fallback
+
+9) FilmModu
+   - videoId + videoType JS metadata
+   - structured Source/sources modeli
+
+10) KultFilmler
+   - iframe
+   - player/index.php data akisi
+   - POST/XHR + getVideo semantigi
+   - loadExtractor fallback
+
+11) RareFilmm
+   - iframe
+   - OK.ru ailesi
+   - hlsManifestUrl metadata kesfi
+   - loadExtractor fallback
+
+12) JetFilmizle
+   - .player-source-btn
+   - data-player-type + data-source-index
+   - XHR/POST ile kaynak secimi
+   - iframe/loadExtractor fallback
+
+13) DiziWatch
+   - Pichive iframe
+   - openPlayer(...) runtime bootstrap
+   - source2 JSON sources/file
+   - master HLS semantigi
+   - loadExtractor fallback
+
+V54'E EKLENEN GENEL CAPABILITY'LER
+---------------------------------
+- JSON_FILE
+- VIDEO_URL
+- FILE_LINK
+- HLS_MANIFEST_FIELD
+- AUTO_HLS_FIELD
+- SOURCE_FILE_LITERAL
+- PLAYER_SOURCE_VARIABLE
+- BASE64_ATOB_LITERAL
+- PDATA_PLAYER_BOOTSTRAP
+- OPENPLAYER_RUNTIME_BOOTSTRAP
+- AJAX_PLAYER_SOURCE_SELECTOR
+- XHR_FETCH_RUNTIME
+- SUBTITLE_TRACK_DISCOVERY
+
+KURAL
+-----
+V54 provider/domain URL tahmini yapmaz. CS3'lerden alan/URL kopyalamaz.
+Sadece genel mekanizmalari tanir. URL ya gercek dokumanda bulunmali ya da dokumanda
+acikca bulunan base64 literalinden decode edilmelidir. Final medya karari mevcut
+V32/V34 manifest-child/media-object kanit mekanizmasina birakilir.
+
+V53 browser/runtime/session, evidence graph, failure diagnostics ve repo report
+korunmustur. V54 eklemesi statik kesif katmanidir.

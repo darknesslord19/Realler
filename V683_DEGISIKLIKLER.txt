@@ -1,0 +1,9 @@
+V6.8.3 FINAL PLAYER CORRELATION
+- V6.8.2 katalog/search/pagination/series/player/embed capture korunur.
+- S/E click <-> player request korelasyonu cift yonlu en yakin +/-0.30 saniye.
+- CDP network olayinin DOM clickten milisaniyeler once gelmesi desteklenir.
+- Her episode click yalniz bir player request tarafindan consume edilir.
+- Eslesme ayni series_root ile sinirlanir.
+- Dizi player requestleri episode_context olmadan kalirsa PLAYER_CORRELATED_READY verilmez.
+- Rapor: series_request_count, series_correlated_request_count, unmatched_episode_click_count, episode_match_mode.
+- Embed/iframe yakalama ve media URL kaydetmeme politikasi degismedi.

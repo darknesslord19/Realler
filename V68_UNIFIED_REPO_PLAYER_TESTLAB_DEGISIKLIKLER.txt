@@ -1,0 +1,11 @@
+V6.8 — UNIFIED REPO + PLAYER STRUCTURE CAPTURE / TEST LAB
+
+- V6.7 katalog, search, pagination, numeric-tail pagination ve DOM sezon→bölüm mantığı korunmuştur.
+- Manuel/pasif dinleme korunmuştur; analiz motoru kendi tıklama/scroll/search işlemi yapmaz.
+- Film/dizi sayfasında görülen iframe/embed/object player yapısı pasif olarak kaydedilir.
+- Alt frame navigasyonları player/embed yapısı için kaydedilir.
+- Player/embed biçimli document/XHR/fetch isteklerinde method ve POST metadata raporlanır.
+- Doğrudan medya URL'leri (.m3u8/.mpd/.mp4/.ts/.m4s vb.) PLAYER_REPO_DATA'ya kaydedilmez.
+- Tek TXT içinde CLOUDSTREAM_REPO_DATA + PLAYER_REPO_DATA bulunur.
+- test_lab.html: poster listesi, dizi sezon/bölüm kanıtı, player/embed host ve request metadata inceleme ekranı.
+- Test Lab aktif medya çözümlemesi yapmaz; manuel oturumda gözlenen player/embed yapısını doğrular.

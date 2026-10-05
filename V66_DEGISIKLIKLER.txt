@@ -1,0 +1,35 @@
+RESOLVER LAB LOCAL V66
+======================
+
+Temel: V65. Mevcut V65 yetenekleri korunmustur.
+
+V66 eklenenler:
+1) ENCODED_PLAYER_URL_DISCOVERY
+   - HTML data-* / player / video / source / embed / src / url niteliklerinde Base64/Base64URL adaylarini yapisal olarak tarar.
+   - Decode sonucu ancak gecerli http/https URL ise kabul edilir.
+   - Domain veya film ID hardcode edilmez.
+
+2) BASE64URL_VALIDATION
+   - Standart Base64 ve URL-safe Base64 (-, _) desteklenir.
+   - Decode edilen metin URL degilse resolver adayi yapilmaz.
+
+3) RUNTIME_DECODED_DOM
+   - MutationObserver ile sonradan olusan iframe/player data-* nitelikleri de yakalanir.
+   - DOM mutation icindeki encoded URL decode edilip ayni resolver zincirine verilir.
+
+4) EVIDENCE GRAPH
+   - Decode edilen player hedefi V66_ENCODED_ATTR / V66_DECODED_DOM kaniti ile graph'a eklenir.
+
+Bu surum Sinemacc adini, player.filmizle.in alan adini, film hash'ini veya final HLS adresini hardcode ETMEZ.
+V65'in browser/CDP, iframe, XHR/fetch, JSON handoff, final media proof ve transport diagnostics mekanizmalari korunur.
+
+Yeni log markerlari:
+[ENGINE] LOCAL V66 START
+[V66_CAPABILITY]
+[V66_ENCODED_URL]
+[V66_DECODED_DOM]
+
+Beklenen Sinemacc yapisal zinciri:
+DETAIL -> encoded data attribute -> decoded player URL -> player/browser runtime -> XHR/fetch -> manifest -> FINAL_MEDIA
+
+Not: Ag/ISP filtre sayfasi veya TLS/network engeli varsa V66 bunu koruma atlatma ile gecmez; mevcut transport diagnostics kanitlariyla raporlar.

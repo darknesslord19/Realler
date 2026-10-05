@@ -1,0 +1,9 @@
+Resolver Lab Local V74
+
+- V73 Network.loadingFailed callback bug fixed: undefined cdp_request_meta -> cdp_requests.
+- Added V74_PLAYER_LOADING_FAILED with Chrome net error/blocked reason and exact URL.
+- Added V74_PLAYER_CORS_ERROR when CDP reports CORS failure metadata.
+- Added V74_HOST_RESOLUTION for failed hosts.
+- Added V74_CHROME_LAUNCH / V74_CHROME_ARGS / V74_SYSTEM_PROXY diagnostics.
+- Chrome debug log enabled at chrome_v74_debug.log.
+- No Sinemacc/filmizle-specific extractor or hardcoded media URL was added.

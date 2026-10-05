@@ -1,0 +1,20 @@
+Resolver Lab V54
+- MRC-builds paketindeki 13 CS3 classes.dex incelendi.
+- Provider-spesifik URL hardcode edilmeden ortak cozum mekanizmalari capability olarak eklendi.
+- Player config file/videoUrl/file_link/hlsManifestUrl/auto.url kesfi eklendi.
+- sources:[{file:VAR}] + literal JS degisken baglama eklendi.
+- Acik atob("...") base64 literal decode + URL yeniden kesfi eklendi.
+- pdata prt_* bootstrap, openPlayer runtime bootstrap, XHR/fetch, AJAX source-selector sinyalleri eklendi.
+- VTT/playerjsSubtitle/tracks altyazi sinyali eklendi.
+- Tum V53 runtime/session ve media-object proof davranisi korundu.
+- URL tahmini/sentezi yok; final proof kurali degismedi.
+
+V54 GENERAL CAPABILITY POOL FIX
+- KultFilmler icin domain/URL hardcode EKLENMEDI.
+- Log kaniti: player iframe ve FirePlayer config bulunuyor; Chromium ortaminda player no_video sayfasina yonleniyor.
+- Yeni genel capability: BROWSER_ENVIRONMENT_PROFILE_POOL.
+- Varsayilan desktop runtime once aynen denenir.
+- Yalniz browser/player ortami reddedildigi KANITLANIRSA bir kez MOBILE_COMPAT profili ile ayni zincir yeniden gozlenir.
+- Mobil profil: Android UA + mobile viewport + touch/mobile browser semantics.
+- Endpoint/token/media URL tahmini yok; final yine network/manifest/media proof ile kabul edilir.
+- V53 mevcut runtime/session/proof mantigi korunur.

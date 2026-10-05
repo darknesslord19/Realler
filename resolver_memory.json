@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "patterns": {
+    "HLS_MANIFEST": {
+      "seen": 29,
+      "success": 29,
+      "strategy": "MASTER_VARIANT_SEGMENT_PROOF"
+    },
+    "HTML5_VIDEO": {
+      "seen": 5,
+      "success": 5,
+      "strategy": ""
+    },
+    "IFRAME_PLAYER": {
+      "seen": 7,
+      "success": 7,
+      "strategy": "CAUSAL_IFRAME_RECURSION"
+    },
+    "JWPLAYER": {
+      "seen": 24,
+      "success": 24,
+      "strategy": "RUNTIME_CONFIG_AND_NETWORK"
+    },
+    "TURNSTILE_GATE": {
+      "seen": 2,
+      "success": 2,
+      "strategy": ""
+    },
+    "ROUTE:IFRAME_PLAYER>JWPLAYER>HTML5_VIDEO>HLS_MANIFEST": {
+      "seen": 2,
+      "success": 2,
+      "strategy": "CAUSAL_RUNTIME_INTERPRETATION"
+    },
+    "ROUTE:IFRAME_PLAYER>HTML5_VIDEO>HLS_MANIFEST": {
+      "seen": 2,
+      "success": 2,
+      "strategy": "CAUSAL_RUNTIME_INTERPRETATION"
+    },
+    "PACKER_JS": {
+      "seen": 2,
+      "success": 2,
+      "strategy": "UNPACK_THEN_CONFIG_VALUE_FLOW"
+    },
+    "ROUTE:IFRAME_PLAYER>HLS_MANIFEST": {
+      "seen": 3,
+      "success": 3,
+      "strategy": "CAUSAL_RUNTIME_INTERPRETATION"
+    },
+    "DIRECT_MEDIA": {
+      "seen": 1,
+      "success": 1,
+      "strategy": ""
+    },
+    "ROUTE:HTML5_VIDEO": {
+      "seen": 1,
+      "success": 1,
+      "strategy": "CAUSAL_RUNTIME_INTERPRETATION"
+    },
+    "ROUTE:JWPLAYER>HLS_MANIFEST": {
+      "seen": 22,
+      "success": 22,
+      "strategy": "CAUSAL_RUNTIME_INTERPRETATION"
+    }
+  },
+  "successes": 30
+}

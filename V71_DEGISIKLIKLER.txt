@@ -1,0 +1,27 @@
+RESOLVER LAB LOCAL V71
+
+Amaç:
+- V70'in tespit ettiği MANIFEST replay 404 sorununu generic şekilde çözmek.
+- Browser'ın canlı oturumda HTTP 200 aldığı HLS cevabının body bilgisini replay'den ÖNCE yakalamak.
+- Canlı #EXTM3U body'yi final proof seed olarak kullanmak.
+- Manifest içindeki gerçek child playlist/media object zincirini takip ederek FINAL'e ulaşmaya çalışmak.
+
+Kritik düzeltme:
+- Önceki on_response akışında Content-Type mpegurl görüldüğünde media kind kaydedilip erken return ediliyordu.
+- Bu yüzden browser gerçekte 200 + HLS almasına rağmen manifest body v33_browser_hls_observed içine girmiyordu.
+- Sonradan replay edilen signed/session-bound URL 404 olunca doğru browser kanıtı kaybediliyordu.
+- V71 HLS body'yi erken return'den önce aynı browser oturumunda yakalar.
+
+Yeni loglar:
+- V71_LIVE_MANIFEST_CAPTURE
+- V71_FINAL_STATUS
+- V71_LIVE_MANIFEST_EVIDENCE
+- V71_PROOF_STEP
+- V71_MISSING
+- V71_NEXT_ACTION
+- V71_FINAL_MEDIA
+- V71_DO_NOT_GUESS
+
+Hardcode yok:
+- fastplay/setplay/domain özel kural eklenmedi.
+- final URL/token/endpoint üretilmez veya tahmin edilmez.

@@ -1,0 +1,9 @@
+Resolver Lab V56 - Kullanıcının Google Chrome'u
+
+- Browser runtime gerektiğinde Playwright Chromium fallback kaldırıldı.
+- 9222'de Chrome yoksa Resolver Lab Windows'ta kurulu Google Chrome'u kendisi bulup açar.
+- Açılan görünür Google Chrome'a CDP ile bağlanır; test URL'sini bu Chrome sekmesinde açar.
+- Kullanıcının ayrıca V54/V55 REAL_CHROME_BASLAT.bat çalıştırması gerekmez.
+- Kalıcı chrome_v56_profile kullanılır; testler arasında cookie/localStorage korunur.
+- Chrome bulunamazsa veya CDP bağlantısı kurulamazsa sessizce başka Chromium'a düşmez; net FAIL verir.
+- V55 resolver mantığına başka değişiklik yapılmadı.

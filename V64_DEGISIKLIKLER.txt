@@ -1,0 +1,23 @@
+LOCAL V64 - F12 / JS ENGINE FORENSICS
+
+Amaç: HDFilmCehennemi/Rapidrame player harici Chrome'da oynatmasa bile final kaynağı çözmek.
+
+V64 akışı:
+1. Root HTML -> gerçek embed/rapidrame URL'sini bulur.
+2. Player HTML'yi HTTP ile alır; browser playback'e bağımlı değildir.
+3. Packer payload'unu açar.
+4. jwplayer sources.file değişkenini bulur.
+5. Değişkeni üreten decoder çağrısını ve decoder function gövdesini eksiksiz yakalar.
+6. Python ile obfuscation algoritmasını tahmin etmeye mecbur kalmaz: yakalanan gerçek JS decoder'ı bağlı gerçek Chrome'un JS engine'inde çalıştırır.
+7. Decoder sonucu URL ise mevcut verify_media zincirine verir: manifest -> child playlist -> segment kanıtı.
+8. PASS olduğunda V64_JS_DECODER_FINAL yazar ve FINAL_MEDIA/FINAL_VERIFY mevcut rapora düşer.
+
+Yeni log köprüleri:
+[V64_JS_DECODER_CAPTURE]
+[V64_JS_DECODER]
+[V64_JS_DECODER_RESULT]
+[V64_JS_DECODER_MEDIA]
+[V64_JS_DECODER_FINAL]
+[V64_JS_DECODER_ERROR]
+
+Not: Bu mekanizma media URL/domain hard-code etmez. Sayfadaki gerçek sources.file -> function -> expression zincirini çalıştırır.

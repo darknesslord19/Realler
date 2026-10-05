@@ -1,0 +1,133 @@
+V81 - REPO-READY F12 EVIDENCE
+=============================
+Amac: Analiz logu tek basina eklenti (repo) yazmaya yetsin. Eksik parca varsa log onu soylesin.
+
+YENI DOSYA
+- v81_layer.py  : Tum V81 mantigi (V80 zinciri degistirilmedi, ustune katman).
+DEGISEN
+- server.py     : Kucuk kancalar (fetch kaydi, sablon, embed takibi, packer, HLS, reklam, rapor).
+                  Eski hali: server_v80_backup.py
+- v3_mitm_capture.py : V80 medya satirlari aynen + F12 gibi TAM ag kaydi ("kind":"net").
+
+NE EKLENDI
+1) F12 AG KAYDI   [V81_NET]  : statik + Chrome(MITM) tum document/iframe/xhr/script/medya/altyazi
+                                istekleri; method, status, ct, boyut, POST govdesi.
+2) SABLON AJAX    [V81_TEMPLATE_FOUND/PARAM/CALL/RESULT]
+                   fetch(`${ajaxurl}?action=..&post_id=${postId}`) gibi istekler:
+                   degiskenler data-* / getAttribute / dataset / JS global / wp ajaxurl'den cozulur,
+                   istek GERCEKTEN atilir, cevaptaki iframe/medya takip edilir.
+3) EMBED TAKIBI   [V81_EMBED_FOLLOW] : .mp4/embed gibi gorunup HTML donen adres player sayfasi olarak acilir.
+4) PACKER MEDYA   [V81_UNPACKED_MEDIA] : packer'dan cikan m3u8/mp4 statik dogrulanir
+                   (V75+ tarayici runtime kapali oldugu icin bunlar bosa dusuyordu).
+5) ALTYAZI        [V81_SUBTITLE_FOUND] / [V81_SUBTITLE] / [V81_SUBTITLE_SUMMARY]
+                   <track>, tracks:[{file,label,kind}], Playerjs "[Turkce]url,[English]url",
+                   subtitle/caption/altyazi alanlari, duz/goreli .vtt/.srt/.ass/.ttml,
+                   packer ici, HLS #EXT-X-MEDIA TYPE=SUBTITLES, Chrome ag trafigi.
+                   Thumbnail/sprite VTT'ler elenir. Her altyazi indirilip WEBVTT/SRT dogrulanir.
+                   Bulunamazsa hangi kaynaklarin tarandigi yazilir (hardsub ihtimali).
+6) REKLAM         [V81_HLS_DURATION] [V81_AD_REJECT] [V81_AD_MEDIA]
+                   /ads/ /preroll/ /vast/ yolu ya da <60 sn ENDLIST'li HLS final SECILMEZ.
+7) HLS DETAY      [V81_HLS_VARIANTS] [V81_HLS_AUDIO] [V81_HLS_KEY] : kaliteler, ses dilleri, AES anahtari.
+8) HEADER TESTI   [V81_HEADER_TEST] [V81_PLAY_HEADERS]
+                   Final manifest ve ilk segment, header'lar TEK TEK cikarilarak denenir:
+                   REQUIRED / OPTIONAL. Tekrar acilamiyorsa "token/IP baglantili" uyarisi.
+9) KAYNAK ZINCIRI [V81_STEP n] (provenance)
+                   Final URL'den geriye: hangi cevabin icinde gectigi (PLAIN / JSON_ESCAPED /
+                   PACKER / BASE64 / AJAX_TEMPLATE / HLS_MASTER_VARIANT / REFERER_ONLY),
+                   istek header'lari, POST govdesi, set-cookie, snippet ve "extract" ipucu.
+10) KARAR         [V81_VERDICT] READY | PARTIAL | FAILED
+                  [V81_STOPPED_AT] basarisizsa nerede koptu:
+                     TOP_PAGE_BLOCKED, REQUEST_BLOCKED, AJAX_TEMPLATE, ONLY_AD_MEDIA,
+                     MEDIA_SEEN_NOT_PROVEN, PLAYER_FRAME_NO_MEDIA, IFRAME_FOUND_NOT_LOADED, NO_PLAYER_FOUND
+                  [V81_MISSING] eksik parcalar (NONE ise eklenti icin her sey logda)
+11) MAKINE OKUR   [V81_REPO_JSON] tek satir JSON (steps, params, final, headers, subtitles, ads, missing)
+
+MITM DINLEME
+- Sure varsayilan 45 sn (V81_LISTEN_SECONDS ortam degiskeni ile degisir).
+- Final bulununca altyazi/ek istekler icin +8 sn daha dinler.
+- Acilan Chrome'da gerekiyorsa Play'e bas.
+
+TEST (yerel sahte site ile dogrulandi)
+- DiziPod benzeri: data-post-id + ${ajaxurl} sablonu + JSON kacisli iframe + packer + master/variant
+  + .jpeg uzantili TS segment + Referer zorunlu segment -> READY, 2 altyazi, Referer REQUIRED bulundu.
+- Reklam: 15 sn preroll HLS reddedildi, asil film final secildi.
+- MITM simulasyonu: 403 nonce -> REQUEST_BLOCKED; JS ile uretilen URL -> JS_GENERATED_URL + script listesi.
+
+V81.1 (DiziPod gercek test sonrasi)
+- Header testi duzeltmesi: tek tek cikarinca hepsi OK ama hic header yokken FAIL ise
+  artik "YOK (header'siz acilir)" DEMEZ; her header tek basina denenir ve
+  [V81_PLAY_HEADERS] manifest EN AZ BIRI GEREKLI: Referer VEYA Origin  yazar.
+
+V81.2 (yabancidizi gercek test sonrasi)
+- LOG KESILMESI: binary POST govdeleri (protobuf, NUL karakter) UI logunu yarida kesiyordu.
+  Tum log satirlari temizleniyor; binary govdeler "[binary N karakter]" olarak yaziliyor.
+- REKLAM/IZLEME GURULTUSU: connatix, adform, criteo, fwmrm, 3lift, adsrvr... trail'de tek satira
+  ozetleniyor ve MITM kaydina hic alinmiyor.
+- 304 ONBELLEK: Chrome profil onbellegi player dosyalarini 304 (govdesiz) donduruyordu.
+  MITM artik If-None-Match/If-Modified-Since siliyor -> her zaman govde gelir. Trail'de 304 isaretlenir.
+- PLAY'E BASMADAN BULMA [V81_FRAME_SCAN]/[V81_FRAME_FINAL]: Chrome'da yuklenen her iframe/ajax
+  cevabi taranir (duz + packer + JSON); m3u8/mp4 varsa hemen dogrulanir.
+- XHR/POST KAYNAGI [via=REQUEST_PARAMS_FROM_PAGE]: ajax POST parametrelerinin (or. e_id) degeri
+  sayfanin neresinde geciyor + istegi kuran script snippet'i. Bulunamayan parametre -> V81_MISSING.
+- PLAYER_FRAME_NO_MEDIA aciklamasi zenginlesti: autostart=false (Play'e basilmadi), player tipi,
+  frame kodunda m3u8 var/yok, 304 listesi.
+- Statik tarafta $.ajax/$.post data:{...} degiskenli istekler de cozulup atiliyor.
+
+V81.3 (yabancidizi 2. test)
+- ASIL HATA: MITM'de yakalanan HLS playlist '.png' uzantiliydi (sheila_039.png, ct=application/x-mpegurl).
+  page_asset() uzantiya bakip "resim" diye ATIYORDU (MEDIA_ASSET_REJECT). Artik Content-Type/#EXTM3U
+  medya diyorsa uzantiya bakilmaz: [V81_DISGUISED_MANIFEST].
+- Red nedenleri kaydediliyor; MEDIA_SEEN_NOT_PROVEN artik "RED NEDENI" + "KANIT ADIMLARI" yazar.
+- Sahte altyazi: jwplayer kutuphanesindeki JS kodu (f.length-1...) altyazi saniliyordu -> elendi.
+- Reklam/izleme listesi genisletildi (usersync, pixel, id5, temu adx, yahoo ups...), trail 140 satir.
+
+V81.4 (yabancidizi 3. test - MolyStream)
+- sheila_039.png PLAYLIST DEGIL, MPEG-TS VIDEO PARCASI (govde 0x47 + "FFmpeg Service01").
+  [V81_SEGMENT_NOT_PLAYLIST] ile acikca yazilir; red nedeni "SEGMENT ... playlist degil".
+- GIZLI PLAYLIST [V81_HIDDEN_PLAYLIST]: Chrome trafiginde govdesi #EXTM3U olan HER cevap
+  (Content-Type text/html olsa bile; or. molystream /q/1) HLS adayi olarak dogrulanir. MASTER once denenir.
+- [V81_SEGMENT_PARENT]: segment yakalanirsa onu listeleyen playlist bulunup dogrulanir.
+- Kanit adimlari (variant/segment) tarayicinin kullandigi Referer/Origin'i devralir
+  (segment 403 vermesin).
+- [V81_ENCODED_URL_REJECT]: base64 cozumunden cikan cop URL (https://\x17\x00R..) artik
+  iframe sayilmiyor; sahte TRANSPORT_FAILURE teshisi bitti.
+- [V81_JS_HINT]: URL JS ile uretiliyorsa, URL parcalarinin gectigi script satirlari gosterilir.
+
+V81.5 (yabancidizi FINAL alindi; tarif duzeltmeleri)
+- POST parametre kaynagi ayni tarayici oturumundaki (MITM) sayfadan aranir; statik kopyada token farkli.
+  HTML ozelligi adi yazilir (or. data-whatwehave) ve deger yuklemeler arasi degisiyorsa "DINAMIK" uyarisi.
+- Kisa/literal degerler (en, tr, true...) sayfada rastgele eslestirilmez -> "sabit deger".
+- Kismi (token) eslesmede istegi atan asil sayfa Referer host'undan bulunur; ara iframe adimi
+  atlanmaz (ydx embed -> dbx master). Referer sadece origin ise ayni host'taki son frame'e eslesir.
+
+V81.6
+- Chrome disk onbellegi: scriptler (main.min.js vb.) onbellekten geldigi icin hic istek atilmiyor,
+  F12 kaydinda gorunmuyordu (POST parametresi 'type=get_whatwehave' kaynagi bu yuzden bulunamadi).
+  Artik her calistirmada yeni/bos cache klasoru + --disk-cache-size=1.
+- Log basligi artik surumu yazar: [ENGINE] LOCAL V81.6 ... (hangi surumle alindigi belli olsun)
+
+V81.7 (dizipal: reklam MP4 final secilmisti)
+- REKLAM BAGLAMI [V81_AD_REJECT reason=AD_CONTEXT(...)]: URL sayfada data-preroll / "ads":[...] /
+  vast / vmap / skipTime / "link"+"video" cifti icinde geciyorsa reklamdir, dogrulanmaz.
+- MP4 SURE KAPISI [V81_MP4_DURATION]: MP4'un mvhd kutusundan sure okunur; <120 sn ya da reklam
+  baglamindaysa final SECILMEZ, dinleme devam eder (gercek player'a kadar).
+- GUVENLIK: yan etkili istekler (report-issue, yorum, login, izleme listesi, oy, chat, progress...)
+  ASLA otomatik cagrilmaz [V81_TEMPLATE_SKIP]. Player ile ilgisiz sablonlar (sayfalama/filtre)
+  atlanir ve "eksik parca" sayilmaz.
+- F12 RESPONSE onizleme: kucuk XHR/JSON cevaplari trail'de "RESPONSE: ..." olarak gorunur
+  (or. /ajax-player-config cevabi).
+
+V81.8 (dizipal: sifreli player config)
+- [V81_DECRYPT_OK]: JSON cevapta {c/ct/data + iv + anahtar alanlari} varsa, SADECE cevaptaki ve
+  oturumdaki degerlerden (k1, k2, ajax-token...) anahtar adaylari kurulur: tek tek, XOR ciftleri,
+  sha256 birlesimleri. AES-CBC + PKCS7 dogru acilirsa formul loga yazilir.
+  dizipal: AES-256-CBC(veri=enc.c, iv=enc.iv, key=k1 XOR k2) -> embed URL.
+- Kaynak zinciri sifre cozumunu adim olarak gosterir: via=AES_DECRYPT + formul.
+- 'cryptography' paketi yoksa server.py'deki saf-Python AES kullanilir.
+
+V81.9 (liderfilm)
+- GUVENLIK: POST /api/series_interaction.php action=mark_watched cagrilmisti (yan etkili).
+  Yasak listesi artik URL + POST govdesine birlikte bakar; watched, mark_, interaction, bookmark,
+  favori, izlendi, listem, add_, save, seen, reaction, share, ping, heartbeat eklendi.
+- Sahte altyazi: Playerjs listesi "[Turkce]url,[Ingilizce]url" butun halinde ve ".vtt,.ass,.srt"
+  gibi uzanti listeleri artik altyazi URL'si sayilmaz (gercek iki VTT ayri ayri bulunuyor).

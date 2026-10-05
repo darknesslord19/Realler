@@ -1,0 +1,3 @@
+{"kind":"request","method":"GET","url":"https://example.test/search?searchterm=reacher","document":false,"api_like":true,"post_data":""}
+{"kind":"request","method":"POST","url":"https://example.test/api/list?currentPage=2","document":false,"api_like":true,"post_data":""}
+{"kind":"response","method":"GET","url":"https://example.test/dizi/reacher/sezon-1/bolum-2","status":200,"content_type":"text/html","document":true,"text":"<html><a href=\"/dizi/reacher/sezon-1/bolum-3\">Bolum 3</a></html>"}

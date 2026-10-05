@@ -1,0 +1,1 @@
+V80: Siteyi Aç ve Dinle manual MITM yoluna altyazı yakalama eklendi.\nSUBTITLE_NETWORK: VTT/SRT/ASS/SSA/TTML, subtitle/caption URL ve MIME cevapları.\nSUBTITLE_TRACK: HTML/JS/JSON içinde açık altyazı URLleri.\nMevcut HLS/video analiz zinciri değiştirilmedi.\n

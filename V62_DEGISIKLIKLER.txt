@@ -1,0 +1,22 @@
+RESOLVER LAB LOCAL V62 — PLAYER SOURCE FORENSICS
+
+V61 ve V60 davranışı korunur:
+- Chrome gerçek/harici oturum.
+- Play kullanıcıya ait.
+- Reklam geçme kullanıcıya ait.
+- Otomatik click / auto-skip / auto-play YOK.
+- Reklam medya karantinası korunur.
+
+Yeni pasif kayıtlar:
+[V62_PLAYER_SOURCE_BODY]
+  FormationFeed/player Document, Script, XHR/fetch gövdeleri; request/response bağlamıyla.
+[V62_PLAYER_SOURCE_URLS]
+  Bu gövdelerin içinden görülen URL literal'leri.
+[V62_PLAYER_CONFIG_SOURCE]
+  JWPlayer/setup/sources işareti taşıyan kaynak gövdesi.
+[V62_RUNTIME_PLAYER_SNAPSHOT]
+  Manuel akış bittikten sonra her frame için document scriptleri, performance resource URL'leri,
+  varsa JWPlayer getPlaylist/getPlaylistItem/getQualityLevels/state ve URL taşıyan string global'ler.
+
+Amaç: FormationFeed -> master.m3u8 kaynağının HTML literal, JS/player config, XHR/fetch
+veya runtime üretilmiş değerlerden hangisi olduğunu logdan kanıtlamak.

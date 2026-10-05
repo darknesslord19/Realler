@@ -1,0 +1,19 @@
+RESOLVER LAB LOCAL V68
+
+Amaç: Resolver başarılı olsa da başarısız olsa da eksik parçaları teşhis için açıkça raporlamak.
+
+Yeni loglar:
+- V68_DIAGNOSIS: sonuç, son kanıtlı aşama, ilk kırılan aşama
+- V68_CONFIRMED_CHAIN: gerçekten kanıtlanan zincir
+- V68_OBSERVED: bulunan URL/script/source var/runtime var/decoder/split/media parçaları
+- V68_MISSING: eksik parçalar
+- V68_EVIDENCE: teşhisi destekleyen gerçek kanıtlar
+- V68_NEXT_CHECK: bir sonraki kod/inceleme adımları
+- V68_DO_NOT_GUESS: final URL/endpoint/header/token uydurulmadığını belirtir
+
+Önemli:
+- V67 çözüm motoru korunmuştur.
+- V68 yeni bir site hardcode etmez.
+- Packed JS bulunup decoder çıkmazsa bunu ayrıca söyler.
+- Decoder yakalanıp URL üretilemezse transform/splice/hash/shuffle/XOR kontrol listesini verir.
+- Başarılı çözümde de observed/confirmed chain raporu üretir.

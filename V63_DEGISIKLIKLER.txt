@@ -1,0 +1,17 @@
+RESOLVER LAB LOCAL V63 — RAPIDRAME PACKED-JS BRIDGE
+
+V62 korunur. V63 yeni kanıt zinciri:
+- Player config içindeki sources.file değişkenini bulur.
+- Dean Edwards packed eval payload'ını açar.
+- Player config ile unpacked payload farklı JS bölgelerindeyse birleştirilmiş analiz görünümü kurar.
+- `var source = decoder("...".split("@"))` ailesini algılar.
+- Decoder fonksiyonunu isimlere bağlı kalmadan yapısal olarak okur.
+- Hash / seed / shuffle sabitlerini unpacked fonksiyondan çıkarır.
+- Caesar/reverse/base64 + deterministic unshuffle + XOR stream zincirini uygular.
+- Çıkan URL'yi [V63_HDF_SPLIT_DECODER], [HDF_RUNTIME_DECODED], [HDF_RUNTIME_MEDIA] ile loglar.
+- Son URL yine mevcut V32 HLS proof zincirinden geçmeden FINAL_MEDIA olmaz.
+
+Önemli:
+- Harici Chrome'da embed oynatılmak zorunda değildir.
+- Static HTTP/rplayer HTML içindeki packed JS yeterliyse çözüm browser playback beklemeden yapılır.
+- URL, rapidrame hostu, source değişken adı veya medya tokenı hard-code edilmez.

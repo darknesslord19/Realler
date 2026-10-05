@@ -1,0 +1,8 @@
+Resolver Lab Local V75
+
+- V74 tabani korunmustur.
+- Generic NONPLAYBACK_API gate eklendi.
+- view-count / page-view / comments / rating / like-dislike / account-admin / analytics-telemetry gibi yan-etki API istekleri CDP logunda gozlenmeye devam eder, fakat resolver/player hedefi olarak kuyruga alinmaz ve browser navigation hedefi yapilmaz.
+- FilmEkseni veya baska bir domain hardcode edilmedi.
+- Gercek player/source/token/stream/media adaylarinin mevcut akisi korunur.
+- Yeni log: [V75_NONPLAYBACK_API_SKIP]

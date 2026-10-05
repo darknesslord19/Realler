@@ -1,0 +1,18 @@
+Resolver Lab V53
+
+TABAN: V51_ADAPTIVE_REASONING
+
+KRITIK KURAL:
+- V51 browser/runtime/playback kodu geri getirildi ve değiştirilmedi.
+- V52 manual-interaction runtime değişikliği V53'e ALINMADI.
+- V49/V51 auto-play, manual fallback, CDP observer, V32 proof ve manifest akışı V51 ile aynıdır.
+
+EKLENEN TEK DAVRANISSAL OLMAYAN KATMAN:
+- Final/kanıt üretildikten sonra GitHub/repo entegrasyon raporu.
+- Final URL, dinamik query bağlamı, gözlenen playback header context, resolution chain ve repo adımları raporlanır.
+- Gözlenen header otomatik REQUIRED sayılmaz; OBSERVED_NOT_PROVEN_REQUIRED olarak işaretlenir.
+- Cookie değeri logda REDACTED.
+- Final doğrulanmadıysa report READY olmaz.
+
+AMAÇ:
+Önce V51'de çalışan yayın davranışını aynen koru; repo raporu sadece sonuçtan sonra bilgi üretir.

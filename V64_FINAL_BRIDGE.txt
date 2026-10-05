@@ -1,0 +1,6 @@
+LOCAL V64 FINAL BRIDGE
+- Decoder sonucu artık doğrudan medya doğrulama zincirine bağlanır.
+- Python urllib decoded CDN'e NO_RESPONSE verirse Chromium HTTP transport fallback devreye girer.
+- Chromium üzerinden master -> variant/media playlist -> segment kanıtı yapılır.
+- Başarılıysa FINAL_MEDIA HLS ve final_verified=true olur.
+- Harici Chrome player UI/video oynatma gerekmez.
