@@ -1,0 +1,22 @@
+Resolver Lab Local V73
+
+Amaç:
+V72 medya byte-signature doğrulamasını korurken, proof motorunun doğruladığı downstream playable manifest URL'sinin eski/root browser adayı tarafından FINAL aşamasında ezilmesini engellemek.
+
+Değişiklikler:
+- v73_proven_playable_manifest(): verified v32 proof içindeki playable_manifest'i tek doğru HLS handoff hedefi olarak seçer.
+- Browser runtime final selector artık seçilen ilk/root candidate URL'sini değil proof-selected playable manifest'i FINAL yapar.
+- PLAYER_HANDOFF_READY URL'si proof-selected playable manifest olur.
+- Playback context önce playable/effective URL'nin yakalanmış context'ini arar, sonra root candidate context'ine fallback eder.
+- Static HLS verify yolu da aynı proof-selected FINAL kuralını kullanır.
+- V34'ün zaten doğru seçtiği downstream playlist daha sonra browser candidate tarafından ezilemez.
+- Yeni loglar: [V73_FINAL_PROMOTE], [V73_FINAL_SELECTOR], [V73_NO_OVERWRITE], [V73_FINAL_MEDIA].
+- FINAL kuralı: verified HLS için FINAL == v32_proof.playable_manifest.
+- Domain/provider/final URL hardcode edilmedi.
+
+Beklenen Filmekseni zinciri:
+root master.m3u8 -> redirect effective master -> 480p/playlist.m3u8 -> MPEG_TS byte proof -> FINAL=480p/playlist.m3u8
+
+Doğrulama:
+python -m py_compile server.py PASS.
+Mevcut eski SyntaxWarning (invalid escape sequence '\\s') devam ediyor; syntax hatası değildir.

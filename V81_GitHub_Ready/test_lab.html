@@ -1,0 +1,100 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Resolver Lab V6.9.2 — V75 Root Test + TXT</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0d1117;color:#e6edf3;margin:0}header{padding:18px 22px;border-bottom:1px solid #30363d;display:flex;gap:12px;align-items:center;justify-content:space-between}.wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}.panel{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:14px}.items{max-height:78vh;overflow:auto}.item{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:8px;border:1px solid #30363d;border-radius:9px;margin-bottom:8px;cursor:pointer}.item:hover{border-color:#58a6ff}.item img{width:62px;height:88px;object-fit:cover;border-radius:6px;background:#222}.muted{color:#8b949e;font-size:12px}.badge{display:inline-block;padding:4px 7px;border-radius:999px;background:#21262d;margin:2px;font-size:12px}.ok{background:#16351f;color:#7ee787}.warn{background:#4d3800;color:#e3b341}button{background:#238636;color:white;border:0;border-radius:8px;padding:9px 12px;cursor:pointer}pre{white-space:pre-wrap;word-break:break-word;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:12px;max-height:300px;overflow:auto}.episodes button{margin:3px;background:#30363d}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.playbox{margin:14px 0}.playbox iframe{width:100%;height:520px;border:1px solid #30363d;border-radius:10px;background:#000}.playbar{display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap}@media(max-width:900px){.wrap,.grid{grid-template-columns:1fr}}
+</style></head><body>
+<header><div><b>Resolver Lab V6.9.2</b> <span class="muted">Repo + V75 Kök Player Test</span></div><div><button onclick="downloadMergedTxt()">TXT İndir (V75 Dahil)</button> <button onclick="location.href='index.html'">Ana Analiz</button></div></header>
+<div class="wrap"><div class="panel"><h3>Yakalanan İçerikler</h3><input id="q" placeholder="Film/dizi ara" oninput="renderList()" style="width:95%;padding:9px;background:#0d1117;color:white;border:1px solid #30363d;border-radius:8px"><div id="items" class="items"></div></div>
+<div class="panel"><div id="summary"></div><div id="playbox" class="playbox"></div><div class="grid"><div><h3>Sezon / Bölüm Kanıtı</h3><div id="episodes" class="episodes muted">İçerik seç.</div></div><div><h3>Player / Embed Kanıtı</h3><div id="player" class="muted">İçerik seç.</div></div></div><h3>Seçili Kayıt</h3><pre id="raw">İçerik seç.</pre></div></div>
+<script>
+let data={},repo={},cards=[],player={},series={},captureStamp='',selectedUrl='',v75Tests={};
+function loadCapture(){
+  let fresh={};try{fresh=JSON.parse(localStorage.getItem('resolverLabV68LastCapture')||'{}')}catch(e){}
+  const stamp=JSON.stringify([fresh.url||'',fresh.final_url||'',fresh.runtime&&fresh.runtime.duration_seconds,
+    fresh.PLAYER_REPO_DATA&&fresh.PLAYER_REPO_DATA.embed_count,
+    fresh.PLAYER_REPO_DATA&&fresh.PLAYER_REPO_DATA.request_count]);
+  if(stamp===captureStamp&&cards.length)return false;
+  captureStamp=stamp; data=fresh; repo=data.CLOUDSTREAM_REPO_DATA||{};
+  player=data.PLAYER_REPO_DATA||data.player||{}; series=repo.series||{};
+  const all=(repo.catalog&&repo.catalog.items)||[];
+  // Test Lab = only content actually visited / tied to player evidence in THIS capture.
+  const touched=new Set();
+  const add=u=>{u=norm(u);if(u)touched.add(u)};
+  add(data.final_url);
+  (player.embeds||[]).forEach(x=>add(x.content_url));
+  (player.requests||[]).forEach(x=>add(x.content_url));
+  (player.chains||[]).forEach(x=>add(x.content_url));
+  (series.ui_groups||[]).forEach(g=>{ if((g.clicked_episode_count||0)>0) add(g.series_root) });
+  cards=all.filter(x=>touched.has(norm(x.url)));
+  // Keep visited evidence even when the URL is not a catalog card (episode/detail pages).
+  for(const u of touched){
+    if(!cards.some(x=>norm(x.url)===u)){
+      const g=(series.ui_groups||[]).find(x=>norm(x.series_root)===u);
+      cards.push({url:u,title:(g&&g.series_title)||u,poster:'',kind:g?'series':'visited_content'});
+    }
+  }
+  return true;
+}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function norm(u){return String(u||'').replace(/\/$/,'')}
+function renderList(){let q=(document.getElementById('q').value||'').toLowerCase();let a=cards.filter(x=>(x.title||'').toLowerCase().includes(q)).slice(0,500);document.getElementById('items').innerHTML=a.map((x,i)=>`<div class="item" onclick='pick(${JSON.stringify(x.url)},true)'><img src="${esc(x.poster)}"><div><b>${esc(x.title)}</b><div class="muted">${esc(x.kind||'')}</div><div class="muted">${esc(x.url)}</div></div></div>`).join('')||'<div class="muted">Bu oturumda katalog yok.</div>'}
+function findUI(u){return (series.ui_groups||[]).find(g=>norm(g.series_root)===norm(u))||null}
+function candidates(u){let exact=(player.chains||[]).filter(x=>norm(x.content_url)===norm(u)&&x.embed_url).map(x=>({url:x.embed_url,host:x.player_host||'',ctx:x.episode_context,source:'chain'}));exact.push(...(player.embeds||[]).filter(x=>norm(x.content_url)===norm(u)&&x.embed_url).map(x=>({url:x.embed_url,host:x.player_host||'',ctx:x.episode_context,source:x.source||'embed'})));let seen=new Set();return exact.filter(x=>x.url&&!seen.has(x.url)&&seen.add(x.url))}
+function playUrl(url,label){if(!url){document.getElementById('playbox').innerHTML='<div class="panel warn">Bu kayıt için oynatılabilir embed yakalanmamış.</div>';return}document.getElementById('playbox').innerHTML=`<div class="playbar"><span class="badge ok">TEST PLAYER</span><b>${esc(label||'Embed')}</b><button onclick="stopPlay()">Durdur</button><button onclick='window.open(${JSON.stringify(url)},"_blank")'>Yeni Sekmede Aç</button></div><iframe src="${esc(url)}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe><div class="muted">Iframe açılmazsa sağlayıcı X-Frame-Options/CSP ile yerel gömmeyi engelliyor olabilir; Yeni Sekmede Aç ile ayrıca test edebilirsin.</div>`}
+async function v75PlayTest(url,label){
+ selectedUrl=url;
+ const box=document.getElementById('playbox');
+ box.innerHTML=`<div class="panel"><span class="badge warn">V75 ÇÖZÜMLÜYOR</span> ${esc(label||url)}<div class="muted">Kök çalışan yayın ve media-object kanıtı aranıyor...</div></div>`;
+ try{
+   const r=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+   const x=await r.json(); v75Tests[url]=x; persistV75(url,label,x);
+   if(!r.ok||x.error) throw new Error(x.error||('HTTP '+r.status));
+   const ok=!!x.final_verified && !!x.final_url;
+   const ctx=x.final_playback_context||{};
+   const ctxText=Object.keys(ctx).length?JSON.stringify(ctx,null,2):'Yok / gerekmiyor';
+   const proof=x.v32_final_media_proof||{};
+   const finalUrl=x.final_url||'';
+   box.innerHTML=`<div class="panel ${ok?'ok':'warn'}"><b>${ok?'✓ V75 KÖK YAYIN PASS':'✗ V75 KÖK YAYIN BULUNAMADI'}</b><div>Tür: ${esc(x.final_type||'NONE')} · FINAL_VERIFY: ${ok?'YES':'NO'} · Confidence: ${esc(x.confidence||0)}%</div>${ok?`<div style="margin-top:8px"><b>FINAL MEDIA</b><pre>${esc(finalUrl)}</pre></div><div class="muted">Manifest/media-object kanıtı doğrulandı.</div><button onclick='navigator.clipboard.writeText(${JSON.stringify(finalUrl)})'>Kök URL Kopyala</button> <button onclick='window.open(${JSON.stringify(finalUrl)},"_blank")'>Kök Yayını Aç</button>`:''}<details><summary>Media Proof</summary><pre>${esc(JSON.stringify(proof,null,2))}</pre></details><details><summary>Playback Context</summary><pre>${esc(ctxText)}</pre></details></div>`;
+   const raw=document.getElementById('raw'); raw.textContent=JSON.stringify({content_url:url,v75_player_test:{final_url:x.final_url,final_type:x.final_type,final_verified:x.final_verified,final_evidence:x.final_evidence,v32_final_media_proof:x.v32_final_media_proof,final_playback_context:x.final_playback_context,resolver_family:x.resolver_family,resolution_dna:x.v50_resolution_dna}},null,2);
+ }catch(e){box.innerHTML=`<div class="panel warn"><b>V75 TEST HATA</b><div>${esc(e.message||e)}</div></div>`}
+}
+
+function persistV75(url,label,x){
+  let cap={}; try{cap=JSON.parse(localStorage.getItem('resolverLabV68LastCapture')||'{}')}catch(e){}
+  cap.V75_ROOT_TESTS=cap.V75_ROOT_TESTS||{};
+  cap.V75_ROOT_TESTS[norm(url)]={
+    content_url:url,label:label||url,tested_at:new Date().toISOString(),
+    final_url:x.final_url||'',final_type:x.final_type||'',final_verified:!!x.final_verified,
+    confidence:x.confidence||0,resolver_family:x.resolver_family||'',
+    final_evidence:x.final_evidence||{},v32_final_media_proof:x.v32_final_media_proof||{},
+    final_playback_context:x.final_playback_context||{},resolution_dna:x.v50_resolution_dna||{}
+  };
+  localStorage.setItem('resolverLabV68LastCapture',JSON.stringify(cap)); data=cap;
+}
+function downloadMergedTxt(){
+  let cap={}; try{cap=JSON.parse(localStorage.getItem('resolverLabV68LastCapture')||'{}')}catch(e){}
+  const tests=cap.V75_ROOT_TESTS||{};
+  const txt='===== RESOLVER LAB V6.9.2 REPO + PLAYER + V75 ROOT TEST =====\n'+JSON.stringify(cap,null,2);
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='repo-player-v75-final.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+function stopPlay(){document.getElementById('playbox').innerHTML=''}
+function pick(u,autoplay=false){let c=cards.find(x=>x.url===u)||{url:u,title:u};let ui=findUI(u);let embeds=(player.embeds||[]).filter(x=>norm(x.content_url)===norm(u));let proofs=(player.playback_proofs||[]).filter(x=>norm(x.content_url)===norm(u));let reqs=(player.requests||[]).filter(x=>norm(x.content_url)===norm(u));let chains=(player.chains||[]).filter(x=>norm(x.content_url)===norm(u));let plays=candidates(u);
+ document.getElementById('summary').innerHTML=`<h2>${esc(c.title)}</h2><span class="badge">${esc(c.kind||'unknown')}</span><span class="badge ${embeds.length||reqs.length?'ok':'warn'}">PLAYER ${embeds.length||reqs.length?'YAKALANDI':'YAKALANMADI'}</span> <button onclick='v75PlayTest(${JSON.stringify(u)},${JSON.stringify(c.title||u)})'>▶ V75 KÖK PLAY TEST</button> <button onclick='window.open(${JSON.stringify(u)},"_blank")'>İçerik Sayfasını Aç</button><div class="muted">${esc(u)}</div>`;if(autoplay)stopPlay()
+ let eh='';if(ui){for(const [sn,eps] of Object.entries(ui.available_episodes||{})){eh+=`<div><b>Sezon ${esc(sn)}</b><br>${eps.map(e=>{let ce=(ui.clicked_episodes||[]).find(z=>String(z.season)===String(sn)&&String(z.episode)===String(e));let eu=(ce&&ce.href)||'';return eu?`<button onclick='v75PlayTest(${JSON.stringify(eu)},${JSON.stringify('S'+sn+'E'+e)})'>▶ S${esc(sn)}E${e}</button>`:`<button title="Önce bu bölümü sitede manuel tıkla">S${esc(sn)}E${e}</button>`}).join('')}</div>`}eh+=`<p class="muted">Manuel tıklanan bölüm: ${ui.clicked_episode_count||0}</p>`}document.getElementById('episodes').innerHTML=eh||'Bu içerik için sezon/bölüm kanıtı yok.';
+ let ph='';chains.forEach(x=>ph+=`<div class="panel"><span class="badge ok">CORRELATED</span><b>${esc(x.player_host)}</b><div>${x.episode_context?`S${esc(x.episode_context.season)}E${esc(x.episode_context.episode)} · `:''}${esc(x.trigger&&x.trigger.method)} ${esc(x.trigger&&x.trigger.url)}</div><pre>${esc((x.trigger&&x.trigger.post_data)||'')}</pre><div class="muted">${esc(x.embed_url)}</div></div>`);if(!chains.length){embeds.forEach(x=>ph+=`<div class="panel"><span class="badge ok">${esc(x.source)}</span><b>${esc(x.player_host)}</b><div class="muted">${esc(x.embed_url)}</div></div>`);reqs.forEach(x=>ph+=`<div class="panel"><span class="badge">${esc(x.method)}</span> ${esc(x.url)}<pre>${esc(x.post_data||'')}</pre></div>`);}document.getElementById('player').innerHTML=ph||'Bu içerik için player/embed yapısı bu oturumda gözlenmedi.';
+ if(proofs.length){ph+=proofs.map(x=>`<div class="panel ok"><b>✓ GERÇEK OYNATMA KANITI</b><div>${esc(x.player_host||'player')} · video currentTime=${esc(x.current_time)}s · readyState=${esc(x.ready_state)}</div><div class="muted">${esc(x.proof)}</div></div>`).join('');document.getElementById('player').innerHTML=ph;} document.getElementById('raw').textContent=JSON.stringify({catalog:c,series_ui:ui,player_chains:chains,player_embeds:embeds,playback_proofs:proofs,player_requests:reqs},null,2)}
+function renderSession(){
+ loadCapture(); renderList(); stopPlay();
+ const site=(()=>{try{return new URL(data.url||data.final_url||'').hostname}catch(e){return ''}})();
+ document.getElementById('episodes').innerHTML='İçerik seç.';
+ document.getElementById('player').innerHTML='İçerik seç.';
+ document.getElementById('raw').textContent='İçerik seç.';
+ document.getElementById('summary').innerHTML=`<h2>Oturum Özeti — ${esc(site||'analiz yok')}</h2><span class="badge">Testte açılan ${cards.length}</span><span class="badge">Embed ${player.embed_count||0}</span><span class="badge">Player request ${player.request_count||0}</span><span class="badge ok">Correlated ${player.chain_count||0}</span><span class="badge ${(player.playback_verified||false)?'ok':'warn'}">Playback ${(player.playback_verified||false)?'PASS':'BEKLENİYOR'}</span><div class="muted">${esc(data.url||'')}<br>Bu ekran yalnız SON analiz oturumunda gerçekten ziyaret/player kanıtı oluşan içerikleri gösterir.</div>`;
+}
+renderSession();
+window.addEventListener('storage',e=>{if(e.key==='resolverLabV68LastCapture'){captureStamp='';renderSession()}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){captureStamp='';renderSession()}});
+window.addEventListener('focus',()=>{captureStamp='';renderSession()});
+</script></body></html>

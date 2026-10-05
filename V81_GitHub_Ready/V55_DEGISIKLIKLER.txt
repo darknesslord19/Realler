@@ -1,0 +1,18 @@
+Resolver Lab V55 — RELIABLE PLAYER INTERACTION / BOOTSTRAP TRIGGER
+
+Amaç: FilmEkseni'ne veya başka bir domaine özel çözüm yazmadan genel capability havuzunu geliştirmek.
+
+Yeni genel capability:
+RELIABLE_PLAYER_INTERACTION_OR_BOOTSTRAP_TRIGGER
+
+Eklenen davranışlar:
+- Player frame sınıflaması domain adına göre değil child-frame + DOM player/video kanıtına göre yapılır.
+- Normal href navigasyon linkleri playback kontrolü olmaktan sert biçimde düşürülür/veto edilir.
+- Aday kontrol player/video/JW/Plyr/VJS ancestor yakınlığı ve DOM geometrisi ile puanlanır.
+- Yalnız güçlü ve navigation-veto yememiş adayda trusted Playwright pointer kullanılır.
+- Tıklama öncesi/sonrası CDP request, XHR/fetch ve media delta ölçülür.
+- Başarı salt click() dönmesiyle kabul edilmez; runtime network/media farkı gerekir.
+- Navigasyon değişip runtime kanıtı oluşmazsa rollback yapılır.
+- Otomatik etkileşim kanıtlanamazsa mevcut manual observation fallback korunur.
+- Final media kabul kuralları değiştirilmedi: manifest/child/media-object proof zinciri aynen korunur.
+- Domain, endpoint, /stream, /api, FilmEkseni veya provider URL hardcode edilmedi.

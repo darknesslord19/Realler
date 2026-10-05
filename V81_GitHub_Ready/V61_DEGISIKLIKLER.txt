@@ -1,0 +1,16 @@
+LOCAL V61 — REPO FORENSICS
+V60 manual Chrome mode is unchanged: Play and all ad skips are USER actions.
+
+New passive capture records:
+- request URL + method
+- request headers
+- POST/request body
+- frameId / loaderId / documentURL
+- initiator
+- response status + MIME + protocol
+- response headers
+- response body (up to 50,000 chars)
+for ajax/ajax-token/token/embed/player/source/manifest/master/m3u8/mpd and non-GET runtime requests.
+
+Goal: expose the exact observed recipe from detail page -> runtime API/token ->
+iframe/embed -> player -> manifest -> media without guessing or hardcoding a final URL.

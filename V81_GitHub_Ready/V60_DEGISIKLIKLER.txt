@@ -1,0 +1,13 @@
+LOCAL V60 — MANUAL EXTERNAL CHROME
+
+AUTO PLAY: OFF
+AUTO SKIP AD: OFF
+AD COUNT: UNKNOWN / UNLIMITED
+MANUAL OBSERVATION WINDOW: 90 seconds
+
+You control the visible Chrome. Press Play and skip every ad manually.
+Resolver only observes network/DOM/runtime traffic in the background.
+Preroll/ad media remains quarantined and cannot become FINAL_MEDIA.
+The outer player's data-preroll metadata no longer classifies playerCover as an ad.
+V58 transport-failure -> real Chrome fallback is preserved.
+No site/domain/final-media URL is hardcoded.

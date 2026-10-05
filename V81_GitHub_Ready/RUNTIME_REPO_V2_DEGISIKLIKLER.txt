@@ -1,0 +1,10 @@
+RUNTIME REPO DISCOVERY V2
+- Repo analizi modu: GENERIC_STRUCTURAL_DISCOVERY + RUNTIME_NETWORK_VERIFY
+- Runtime baslatma sirasi:
+  1) 127.0.0.1:9222 mevcut Chrome CDP
+  2) Kurulu Google Chrome ile Playwright persistent context
+  3) BROWSER_KUR.bat ile kurulan Playwright Chromium
+- TXT raporunda runtime bolumu artik zorunlu gorunur:
+  available, mode, error, search_verified, pagination_verified
+- Search/pagination VERIFIED yalniz gercek sonuc/yeni kart kaniti ile olur.
+- Resolver/player /api/analyze akisi degistirilmedi.

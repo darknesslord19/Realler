@@ -1,0 +1,8 @@
+V79 SUBTITLE RUNTIME
+- Engine etiketi: LOCAL V79 SUBTITLE RUNTIME START
+- Mevcut V75/V78 HLS cozum zinciri korunmustur.
+- Gercek Chrome/CDP runtime icinde tum frame'ler JWPlayer getPlaylistItem().tracks icin taranir.
+- HTML <track src> elemanlari da tum frame'lerde taranir.
+- .vtt/.srt/.ass/.ssa/.ttml/.dfxp ve subtitle/caption ag cevaplari bagimsiz yakalanir.
+- text/vtt, SubRip ve TTML MIME cevaplari uzantisiz URL olsa bile SUBTITLE_NETWORK olarak loglanir.
+- Yeni loglar: SUBTITLE_RUNTIME_SCAN, SUBTITLE_RUNTIME, SUBTITLE_NETWORK.

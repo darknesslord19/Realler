@@ -1,0 +1,9 @@
+V67
+- V66 tamamen korunur.
+- Final yoksa ilk kanıtlı kırılma noktası raporlanır.
+- Eksik zincir parçaları açıkça listelenir.
+- Chrome CDP Network.loadingFailed kaydedilir.
+- urllib ve Chrome transport hataları ayrı kanıt olarak yazılır.
+- Yeni markerlar: V67_CDP_LOADING_FAILED, V67_RESULT, V67_MISSING_PIECES,
+  V67_FAILURE_EVIDENCE, V67_PLAIN_REASON.
+- Güvenlik/TLS bypass yapılmaz; yalnız teşhis edilir.

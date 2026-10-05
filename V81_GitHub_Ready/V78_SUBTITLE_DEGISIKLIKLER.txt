@@ -1,0 +1,14 @@
+V78 - GENERIC SUBTITLE DISCOVERY
+
+Mevcut V75 video resolver mantigi korunmustur.
+Eklenenler:
+1) Decrypt edilen player JSON objelerinde tracks/subtitles/captions taramasi.
+2) VTT/SRT/ASS/SSA/TTML/DFXP URL tespiti.
+3) Canli JWPlayer getPlaylistItem().tracks runtime taramasi.
+4) Altyazi bulunduğunda log markerlari:
+   [SUBTITLE_DISCOVERY]
+   [SUBTITLE_TRACK]
+   [SUBTITLE_RUNTIME]
+5) Subtitle URL'leri video/media candidate olarak islenmez; video resolver davranisi bozulmaz.
+
+The Uprising testi icin normal BASLAT.bat akisini kullan ve ayni film URL'sini analiz et.

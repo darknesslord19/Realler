@@ -1,0 +1,18 @@
+RESOLVER LAB LOCAL V70
+
+Amaç: Sadece eksik parçayı göstermek değil, kanıtlı zinciri FINAL'e kadar sürdürmek.
+
+Yeni kurallar:
+- MANIFEST artık yalnız URL/"root step" bulundu diye PASS olmaz.
+- 4xx/5xx manifest kanıtı değildir. 404 + application/octet-stream => FAIL.
+- MANIFEST için başarılı HTTP cevabı gerekir; HLS/MPD içeriği final-proof motorunda doğrulanır.
+- Player interaction zorunlu aşama değildir. Bootstrap/config/media kanıtı tıklama olmadan oluşmuşsa NOT_REQUIRED olur.
+- Böylece sahte PLAYER_INTERACTION kırılması gerçek MANIFEST/MEDIA_PROOF sorununu gizlemez.
+- V70_FINAL_STATUS: final durumu + ilk gerçek kırılma + eksik capability.
+- V70_MANIFEST_STRICT: URL/status/content-type ve strict valid sonucu.
+- V70_ROADMAP: mevcut kanıta göre FINAL'e giden sıradaki gerçek adımlar.
+- V70_FINAL_MEDIA: yalnız doğrulanmış final varsa URL verir.
+- V70_PROOF_RULE: observed source -> valid manifest -> child/media object proof olmadan FINAL yok.
+- Hardcode/uydurma endpoint/header/token yok.
+
+V69 ve önceki çözüm motorları korunur; V70 doğrulama/teşhis mantığını sıkılaştırır.

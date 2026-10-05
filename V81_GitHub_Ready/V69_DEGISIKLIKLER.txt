@@ -1,0 +1,29 @@
+Resolver Lab Local V69
+
+V68 korunarak teşhis katmanı V69'a genişletildi.
+
+Yeni loglar:
+- V69_DIAGNOSIS
+- V69_CONFIRMED_CHAIN
+- V69_OBSERVED
+- V69_MISSING
+- V69_BOUNDARY
+- V69_LAST_PASS_EVIDENCE
+- V69_BROKEN_EVIDENCE
+- V69_STAGE_EVIDENCE
+- V69_MANIFEST_EVIDENCE
+- V69_INTERACTION_EVIDENCE
+- V69_NETWORK_EVIDENCE
+- V69_TRANSPORT_FAILURE / V69_BROWSER_FAILURE
+- V69_EVIDENCE
+- V69_NEXT_CHECK
+- V69_DO_NOT_GUESS
+
+Ana fark:
+V69 sadece MANIFEST_PROVEN gibi bir etiket basmaz. DNA stage'in PASS olmasına neden olan gerçek evidence'i de taşır. Manifest kanıtında gözlendiyse URL + HTTP status + content-type raporlanır. İlk kırılan sınırda son PASS aşaması ve kanıtı ile ilk broken aşama ve kanıtı ayrı basılır. PLAYER_INTERACTION kırılmasında player/control, before-after network delta ve frame/initiator/response kanıtlarının toplanması açık sonraki kontrol olarak verilir.
+
+Kural değişmedi:
+- final URL hardcode yok
+- endpoint uydurma yok
+- header/token uydurma yok
+- siteye özel çözüm eklenmedi

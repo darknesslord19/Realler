@@ -1,0 +1,9 @@
+V77 FINALIZE/TXT FIX
+
+- Analizi Bitir artik status=stopping cevabini final TXT olarak indirmez.
+- /api/manual-stop durdurma sinyali verir; finalizasyon arka planda tamamlanir.
+- /api/manual-status status=done oldugunda tam capture sonucunu dondurur.
+- UI final CLOUDSTREAM_REPO_DATA olusana kadar 750ms aralikla bekler (maks. 90 sn).
+- Eksik/stopping rapor TXT olarak indirilmez.
+- Final dosya adi: repo-player-manual-listen-v77.txt
+- MITM/player cozumleme mantigina dokunulmadi.

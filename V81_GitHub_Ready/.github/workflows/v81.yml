@@ -1,0 +1,80 @@
+name: V81 Site Analyzer
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Analiz edilecek HTTP/HTTPS site URL'si"
+        required: true
+        type: string
+      max_depth:
+        description: "Maksimum tarama derinliği"
+        required: false
+        default: "4"
+        type: string
+      max_requests:
+        description: "Maksimum statik istek sayısı"
+        required: false
+        default: "32"
+        type: string
+      timeout_minutes:
+        description: "Workflow timeout (dakika)"
+        required: false
+        default: "15"
+        type: string
+
+jobs:
+  analyze:
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ fromJSON(inputs.timeout_minutes) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install V81 browser runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-github.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Compile check
+        run: |
+          python -m py_compile server.py v81_layer.py repo_analyzer.py manual_listener.py github_runner.py
+
+      - name: Run V81
+        env:
+          V81_GITHUB: "1"
+          V81_MAX_DEPTH: ${{ inputs.max_depth }}
+          V81_MAX_REQUESTS: ${{ inputs.max_requests }}
+          V81_LISTEN_SECONDS: "12"
+          PYTHONUNBUFFERED: "1"
+        run: |
+          mkdir -p v81_output
+          python github_runner.py "${{ inputs.url }}" --output v81_output
+
+      - name: Upload V81 report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v81-report
+          path: v81_output/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload Playwright diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v81-playwright-diagnostics
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7

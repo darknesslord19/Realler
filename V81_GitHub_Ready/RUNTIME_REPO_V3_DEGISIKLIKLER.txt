@@ -1,0 +1,6 @@
+V3 - Generic Repo Discovery
+- Search runtime: hidden/toggled search UI discovery expanded; request/navigation + changed results verification.
+- Pagination: collection pages + explicit Next/Load More + multi-scroll + verified page=2/paged=2//page/2//sayfa/2 fallback probes.
+- Poster association: shared grid/row ancestors can no longer donate the first poster to multiple cards.
+- READY remains evidence-based: search/pagination are true only after verified behavior/content change.
+- No site/domain-specific rules added.

@@ -1,0 +1,12 @@
+CMD CANLI ANALIZ SURUMU
+
+1) BASLAT.bat
+2) URL yaz -> Siteyi Ac ve Dinle
+3) Acilan normal Google Chrome'da siteyi elle gez:
+   kategori / arama / sayfalama / dizi / sezon / bolum / player
+4) Analizi Bitir'e BASMAK ZORUNDA DEGIL.
+5) BASLAT.bat CMD penceresinde su etiketler canli akar:
+   [SAYFA] [ARAMA] [SAYFALAMA] [POST] [BODY] [API] [IFRAME] [MEDIA] [CEVAP]
+6) CMD'deki ilgili bolumu kopyalayip ChatGPT'ye gonder.
+
+Not: Normal Chrome + MITM kullanilir. Manual analiz yolunda Playwright/CDP yoktur.
