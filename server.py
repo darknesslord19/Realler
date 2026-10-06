@@ -3724,11 +3724,26 @@ class Analyzer(V81Mixin):
                     ]
                     chrome_exe = next((x for x in chrome_candidates if x and os.path.isfile(x)), None)
                     if not chrome_exe:
-                        self.v50_real_chrome_attached=False
-                        self.v50_browser_mode="GOOGLE_CHROME_REQUIRED"
-                        self.browser_runtime_error="GOOGLE_CHROME_NOT_FOUND"
-                        self.log("[V56_GOOGLE_CHROME] FAIL reason=CHROME_EXE_NOT_FOUND")
-                        return False
+                        # GitHub Actions/Linux: the workflow installs Playwright Chromium.
+                        # Use that executable with the existing CDP launch path instead
+                        # of requiring a system Google Chrome installation.
+                        if os.environ.get("V81_GITHUB", "").lower() in ("1", "true", "yes"):
+                            try:
+                                chrome_exe = pw.chromium.executable_path
+                                self.v50_browser_mode="GITHUB_PLAYWRIGHT_CHROMIUM_CDP"
+                                self.log(f"[V81_GITHUB_BROWSER] using Playwright Chromium executable={chrome_exe}")
+                            except Exception as e:
+                                self.v50_real_chrome_attached=False
+                                self.v50_browser_mode="GITHUB_PLAYWRIGHT_CHROMIUM_FAILED"
+                                self.browser_runtime_error=f"GITHUB_CHROMIUM_PATH: {type(e).__name__}: {e}"
+                                self.log(f"[V81_GITHUB_BROWSER] FAIL executable_path error={type(e).__name__}: {e}")
+                                return False
+                        else:
+                            self.v50_real_chrome_attached=False
+                            self.v50_browser_mode="GOOGLE_CHROME_REQUIRED"
+                            self.browser_runtime_error="GOOGLE_CHROME_NOT_FOUND"
+                            self.log("[V56_GOOGLE_CHROME] FAIL reason=CHROME_EXE_NOT_FOUND")
+                            return False
 
                     profile_dir = str(ROOT / "chrome_v56_profile")
                     os.makedirs(profile_dir, exist_ok=True)
